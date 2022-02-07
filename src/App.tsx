@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {MouseEvent, useState} from 'react';
 import {Route, Routes} from "react-router-dom";
 import {LinkContainer} from 'react-router-bootstrap';
 import Container from "react-bootstrap/Container";
@@ -13,16 +13,24 @@ import CategoryPage from "./Category/CategoryPage";
 import SubCategoryPage from "./SubCategory/SubCategoryPage";
 import ExportModal from "./Data/ExportModal";
 import ImportModal from "./Data/ImportModal";
+import AboutModal from "./AboutModal";
 
 const App: React.FC = () => {
     const [showExportModal, setShowExportModal] = useState(false);
     const [showImportModal, setShowImportModal] = useState(false);
+    const [showAboutModal, setShowAboutModal] = useState(false);
+
+    const openAboutModal = (e: MouseEvent<HTMLAnchorElement>) => {
+        e.preventDefault();
+        setShowAboutModal(true);
+    };
 
     return (
         <>
             <RecoilRoot>
                 <ExportModal show={showExportModal} onHide={() => setShowExportModal(false)}/>
                 <ImportModal show={showImportModal} onHide={() => setShowImportModal(false)}/>
+                <AboutModal show={showAboutModal} onHide={() => setShowAboutModal(false)}/>
 
                 <Navbar expand="lg" variant="dark" bg="dark">
                     <Container>
@@ -66,6 +74,13 @@ const App: React.FC = () => {
                         <Route path="/rarity" element={<RarityPage/>}/>
                     </Routes>
                 </Container>
+
+                <footer className="footer mt-auto py-3 bg-light"
+                        style={{position: "fixed", bottom: "0", width: "100%"}}>
+                    <Container className="text-end">
+                        <a href="#" onClick={openAboutModal}>À propos</a>
+                    </Container>
+                </footer>
             </RecoilRoot>
         </>
     );
