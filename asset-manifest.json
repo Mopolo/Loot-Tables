@@ -1,10 +1,10 @@
 {
   "files": {
-    "main.css": "/static/css/main.1a8a0596.css",
-    "main.js": "/static/js/main.067f8820.js",
-    "index.html": "/index.html",
-    "main.1a8a0596.css.map": "/static/css/main.1a8a0596.css.map",
-    "main.067f8820.js.map": "/static/js/main.067f8820.js.map"
+    "main.css": "/Loot-Tables/static/css/main.1a8a0596.css",
+    "main.js": "/Loot-Tables/static/js/main.067f8820.js",
+    "index.html": "/Loot-Tables/index.html",
+    "main.1a8a0596.css.map": "/Loot-Tables/static/css/main.1a8a0596.css.map",
+    "main.067f8820.js.map": "/Loot-Tables/static/js/main.067f8820.js.map"
   },
   "entrypoints": [
     "static/css/main.1a8a0596.css",
