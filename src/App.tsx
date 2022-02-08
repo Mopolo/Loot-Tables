@@ -74,7 +74,7 @@ const App: React.FC = () => {
                 </Container>
 
                 <footer className="footer mt-auto py-3 bg-light"
-                        style={{position: "fixed", bottom: "0", width: "100%"}}>
+                        style={{position: "fixed", bottom: "0", width: "100%", zIndex: 4}}>
                     <Container>
                         <Row>
                             <Col>
