@@ -20,11 +20,6 @@ const App: React.FC = () => {
     const [showImportModal, setShowImportModal] = useState(false);
     const [showAboutModal, setShowAboutModal] = useState(false);
 
-    const openAboutModal = (e: MouseEvent<HTMLAnchorElement>) => {
-        e.preventDefault();
-        setShowAboutModal(true);
-    };
-
     return (
         <>
             <RecoilRoot>
@@ -78,7 +73,7 @@ const App: React.FC = () => {
                 <footer className="footer mt-auto py-3 bg-light"
                         style={{position: "fixed", bottom: "0", width: "100%"}}>
                     <Container className="text-end">
-                        <a href="#" onClick={openAboutModal}>À propos</a>
+                        <span className="link-primary" role="button" onClick={() => setShowAboutModal(true)}>À propos</span>
                     </Container>
                 </footer>
             </RecoilRoot>
