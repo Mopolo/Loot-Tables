@@ -29,11 +29,11 @@ const App: React.FC = () => {
 
                 <Navbar expand="lg" variant="dark" bg="dark">
                     <Container>
-                        <LinkContainer to="/generator">
+                        <LinkContainer to="/">
                             <Navbar.Brand>Loot table</Navbar.Brand>
                         </LinkContainer>
                         <Nav className="me-auto">
-                            <LinkContainer to="/generator">
+                            <LinkContainer to="/">
                                 <Nav.Link>Générateur</Nav.Link>
                             </LinkContainer>
                             <LinkContainer to="/items">
@@ -61,7 +61,7 @@ const App: React.FC = () => {
 
                 <Container>
                     <Routes>
-                        <Route path="/generator" element={<GeneratorPage/>}/>
+                        <Route path="/" element={<GeneratorPage/>}/>
                         <Route path="/items" element={<ItemsPage/>}/>
                         <Route path="/categories" element={<CategoryPage/>}/>
                         <Route path="/sub-categories" element={<SubCategoryPage/>}/>
