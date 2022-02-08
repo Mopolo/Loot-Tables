@@ -1,7 +1,8 @@
 import React from "react";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
-import {Alert, Form} from "react-bootstrap";
+import Alert from "react-bootstrap/Alert";
+import Form from "react-bootstrap/Form";
 import {useRecoilValue} from "recoil";
 import {itemStore} from "../Item/ItemStore";
 import {categoryStore} from "../Category/CategoryStore";
