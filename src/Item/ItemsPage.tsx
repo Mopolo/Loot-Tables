@@ -7,19 +7,26 @@ import ItemFormRow from "./ItemFormRow";
 import {newModelId} from "../Common/Model";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPlus} from "@fortawesome/free-solid-svg-icons/faPlus";
+import {ButtonGroup, ButtonToolbar} from "react-bootstrap";
 
 const ItemsPage: React.FC = () => {
     const [itemList, setItemList] = useRecoilState(itemStore);
 
-    const add = () => {
-        setItemList(old => [...old, {
+    const createEmptyItem = () => {
+        return {
             id: newModelId(),
             name: "",
             categories: [],
             subCategories: [],
             types: [],
             rarities: [],
-        }]);
+        };
+    }
+
+    const add = (quantity: number) => {
+        const newItems = Array.from(Array(quantity).keys()).map(i => createEmptyItem());
+
+        setItemList(old => [...old, ...newItems]);
     };
 
     return (
@@ -41,9 +48,18 @@ const ItemsPage: React.FC = () => {
             </Table>
 
             <div className="mt-2">
-                <Button onClick={add}>
-                    <FontAwesomeIcon icon={faPlus} fixedWidth/>
-                </Button>
+                <ButtonToolbar>
+                    <ButtonGroup className="me-2">
+                        <Button onClick={() => add(1)}>
+                            <FontAwesomeIcon icon={faPlus} fixedWidth/>
+                        </Button>
+                    </ButtonGroup>
+                    <ButtonGroup className="me-2">
+                        <Button onClick={() => add(10)}>
+                            <FontAwesomeIcon icon={faPlus} fixedWidth/> 10
+                        </Button>
+                    </ButtonGroup>
+                </ButtonToolbar>
             </div>
         </div>
     );
