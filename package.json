@@ -2,7 +2,7 @@
   "name": "loot-table",
   "version": "0.1.0",
   "license": "MIT",
-  "homepage": "https://mopolo.dev/Loot-Tables/",
+  "homepage": "https://loot-table.mopolo.dev",
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.36",
     "@fortawesome/free-solid-svg-icons": "^5.15.4",
