@@ -184,7 +184,7 @@ class DropdownMultiselect extends React.Component {
                     onClick={() => this.handleClick()}
                     style={{
                         width: "100%",
-                        maxWidth: "300px",
+                        maxWidth: "200px",
                         overflow: "hidden",
                     }}
                 >
