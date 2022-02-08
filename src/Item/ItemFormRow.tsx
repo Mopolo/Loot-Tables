@@ -42,6 +42,7 @@ const ItemFormRow: React.FC<Props> = (props) => {
     const editSubCategoryList = (newValue: Array<string>) => replaceItem("subCategories", newValue);
     const editTypeList = (newValue: Array<string>) => replaceItem("types", newValue);
     const editRarityList = (newValue: Array<string>) => replaceItem("rarities", newValue);
+    const editIncludeHigherRarities = (isChecked: boolean) => replaceItem("includeHigherRarities", isChecked);
 
     const deleteItem = () => {
         const newList = removeItemAtId(itemList, props.model.id);
@@ -49,8 +50,8 @@ const ItemFormRow: React.FC<Props> = (props) => {
         setItemList(newList);
     };
 
-    function selectedCriteria<T extends Model>(names: Array<String>, criteriaList: Array<T>) {
-        return criteriaList.filter(c => names.includes(c.id)).map(c => c.name);
+    function selectedCriteria<T extends Model>(ids: Array<String>, criteriaList: Array<T>) {
+        return criteriaList.filter(c => ids.includes(c.id)).map(c => c.name);
     }
 
     function onChangeCriteria<T extends Model>(newCriteriaNamesList: Array<string>, criteriaList: Array<T>, editCriteriaList: EditCriteriaList) {
@@ -87,11 +88,15 @@ const ItemFormRow: React.FC<Props> = (props) => {
                 />
             </td>
             <td>
-                <DropdownMultiselect
-                    options={rarityList.map(c => c.name)}
-                    name={"rarities" + props.model.id}
-                    selected={selectedCriteria(props.model.rarities, rarityList)}
-                    handleOnChange={(names: Array<string>) => onChangeCriteria(names, rarityList, editRarityList)}
+                <Form.Select value={selectedCriteria(props.model.rarities, rarityList)[0]} onChange={e => onChangeCriteria([e.target.value], rarityList, editRarityList)}>
+                    {rarityList.map(rarity => <option value={rarity.name} key={rarity.id}>{rarity.name}</option>)}
+                </Form.Select>
+            </td>
+            <td className="text-center">
+                <Form.Switch
+                    className="mt-2"
+                    checked={props.model.includeHigherRarities}
+                    onChange={e => editIncludeHigherRarities(e.target.checked)}
                 />
             </td>
             <td>

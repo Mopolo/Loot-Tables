@@ -60,3 +60,11 @@ export const itemStore = atom<Array<ItemModel>>({
         localStorageEffect('items'),
     ]
 });
+
+export const itemsPageStore = atom({
+    key: "items-page",
+    default: 1,
+    effects: [
+        localStorageEffect('items-page'),
+    ]
+});

@@ -1,16 +1,75 @@
-import React from "react";
+import React, {useEffect} from "react";
 import Table from "react-bootstrap/Table";
-import {useRecoilState} from "recoil";
+import {useRecoilState, useRecoilValue} from "recoil";
 import Button from "react-bootstrap/Button";
-import {itemStore} from "./ItemStore";
+import {itemsPageStore, itemStore} from "./ItemStore";
 import ItemFormRow from "./ItemFormRow";
 import {newModelId} from "../Common/Model";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPlus} from "@fortawesome/free-solid-svg-icons/faPlus";
-import {ButtonGroup, ButtonToolbar} from "react-bootstrap";
+import ButtonGroup from "react-bootstrap/ButtonGroup";
+import ButtonToolbar from "react-bootstrap/ButtonToolbar";
+import Pagination from "react-bootstrap/Pagination";
+import {rarityStore} from "../Rarity/RarityStore";
 
 const ItemsPage: React.FC = () => {
     const [itemList, setItemList] = useRecoilState(itemStore);
+    const [page, setPage] = useRecoilState(itemsPageStore);
+    const rarityList = useRecoilValue(rarityStore);
+    const itemsPerPage = 15;
+    const pages = Math.ceil(itemList.length / itemsPerPage);
+    const triggerComplexPagination = pages > 10;
+
+    useEffect(() => {
+        if (page > pages) {
+            setPage(pages);
+        }
+    });
+
+    const PaginationRange: React.FC<{ from: number, to: number }> = (props) => {
+        let numbers = [];
+
+        for (let number = props.from; number <= props.to; number++) {
+            if (number <= 0 || number > pages) {
+                continue;
+            }
+
+            numbers.push(
+                <Pagination.Item key={number} active={number === page} onClick={() => setPage(number)}>
+                    {number}
+                </Pagination.Item>
+            );
+        }
+
+        return <>
+            {numbers}
+        </>;
+    }
+
+    const Paginator = () => {
+        return <Pagination>
+            {triggerComplexPagination && <Pagination.First onClick={() => setPage(1)} disabled={page === 1}/>}
+            <Pagination.Prev onClick={() => setPage(page - 1)} disabled={page === 1}/>
+
+            {triggerComplexPagination && page > 4 && <>
+                <Pagination.Item onClick={() => setPage(1)}>{1}</Pagination.Item>
+                <Pagination.Ellipsis/>
+            </>}
+
+            <PaginationRange from={triggerComplexPagination ? page - 2 : 1}
+                             to={triggerComplexPagination ? page + 2 : pages}/>
+
+            {triggerComplexPagination && page < pages - 4 && <>
+                <Pagination.Ellipsis/>
+                <Pagination.Item onClick={() => setPage(pages)}>{pages}</Pagination.Item>
+            </>}
+
+            <Pagination.Next onClick={() => setPage(page + 1)} disabled={page === pages}/>
+            {triggerComplexPagination && <Pagination.Last onClick={() => setPage(pages)} disabled={page === pages}/>}
+        </Pagination>;
+    }
+
+    // todo bloquer page si une liste de critères est vide
 
     const createEmptyItem = () => {
         return {
@@ -19,7 +78,8 @@ const ItemsPage: React.FC = () => {
             categories: [],
             subCategories: [],
             types: [],
-            rarities: [],
+            rarities: [rarityList[0].id],
+            includeHigherRarities: false
         };
     }
 
@@ -31,6 +91,8 @@ const ItemsPage: React.FC = () => {
 
     return (
         <div className="mt-5">
+            <Paginator/>
+
             <Table borderless hover>
                 <thead>
                 <tr>
@@ -38,12 +100,14 @@ const ItemsPage: React.FC = () => {
                     <th>Catégories</th>
                     <th>Sous-catégories</th>
                     <th>Types</th>
-                    <th>Raretés</th>
+                    <th>Rareté</th>
+                    <th title="Inclure dans les raretés précédentes (ex: un item commun sera lootable avec une rareté épique dans le générateur)">Précédentes</th>
                     <th>Supprimer</th>
                 </tr>
                 </thead>
                 <tbody>
-                {itemList.map(i => <ItemFormRow model={i} key={i.id}/>)}
+                {itemList.slice((page - 1) * itemsPerPage, ((page - 1) * itemsPerPage) + itemsPerPage).map(i =>
+                    <ItemFormRow model={i} key={i.id}/>)}
                 </tbody>
             </Table>
 

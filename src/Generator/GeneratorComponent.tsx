@@ -16,6 +16,7 @@ import ItemModel from "../Item/ItemModel";
 import {faGem} from "@fortawesome/free-solid-svg-icons/faGem";
 import {getRandomInt} from "../Util/Math";
 import {generatorStore} from "./GeneratorStore";
+import RarityBadge from "../Rarity/RarityBadge";
 
 const GeneratorComponent: React.FC = () => {
     const itemList = useRecoilValue(itemStore);
@@ -34,10 +35,36 @@ const GeneratorComponent: React.FC = () => {
 
     useEffect(() => {
         setLootableItems(itemList.filter(i => {
+            if (i.categories.length === 0
+                || i.subCategories.length === 0
+                || i.types.length === 0
+                || i.rarities.length === 0
+            ) {
+                return false;
+            }
+
+            let rarityOk = false;
+
+            // If this item is included to higher rarities we have to check that here
+            if (i.includeHigherRarities) {
+                const itemRarityModel = rarityList.find(r => r.id === i.rarities[0]);
+                const selectedRarityModel = rarityList.find(r => r.id === selectedRarity);
+
+                if (!itemRarityModel || !selectedRarityModel) {
+                    return false;
+                }
+
+                const includedRarities = rarityList.filter(r => r.percentage >= selectedRarityModel.percentage).map(r => r.id);
+
+                rarityOk = includedRarities.includes(itemRarityModel.id);
+            } else {
+                rarityOk = i.rarities.includes(selectedRarity);
+            }
+
             return i.categories.includes(selectedCategory)
                 && i.subCategories.includes(selectedSubCategory)
                 && i.types.includes(selectedType)
-                && i.rarities.includes(selectedRarity);
+                && rarityOk;
         }));
 
         setGeneratorOptions({
@@ -46,15 +73,15 @@ const GeneratorComponent: React.FC = () => {
             type: selectedType,
             rarity: selectedRarity,
         });
-    }, [itemList, selectedCategory, selectedSubCategory, selectedType, selectedRarity, setGeneratorOptions]);
+    }, [itemList, rarityList, selectedCategory, selectedSubCategory, selectedType, selectedRarity, setGeneratorOptions]);
 
     const generateLoot = () => {
         let items = lootableItems.filter(i => {
             // fetch a random number
             let chance = getRandomInt(0, 100);
 
-            // find out the selected rarity percentage
-            let rarity = rarityList.filter(r => r.id === selectedRarity)[0]?.percentage || 0;
+            // find out the item's rarity percentage
+            let rarity = rarityList.find(r => r.id === i.rarities[0])?.percentage || 0;
 
             return chance < rarity;
         });
@@ -120,8 +147,14 @@ const GeneratorComponent: React.FC = () => {
                     {
                         lootableItems.length === 0
                             ? <span>Aucun loot</span>
-                            : <ListGroup>
-                                {lootableItems.map(item => <ListGroup.Item key={item.id}>{item.name}</ListGroup.Item>)}
+                            : <ListGroup as="ol">
+                                {lootableItems.map(item => {
+                                    return <ListGroup.Item key={item.id}
+                                                           as="li"
+                                                           className="d-flex justify-content-between align-items-start">
+                                        {item.name} <RarityBadge rarity={rarityList.find(r => r.id === item.rarities[0])}/>
+                                    </ListGroup.Item>
+                                })}
                             </ListGroup>
                     }
                 </Col>
