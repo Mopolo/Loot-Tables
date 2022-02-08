@@ -75,14 +75,36 @@ class DropdownMultiselect extends React.Component {
             let selectedLabels = [];
 
             this.state.selected.forEach((row) => {
-                let foundOption = currentOptions.find((option) => {
-                    return option['key'] === row;
-                });
+                let foundOption = currentOptions
+                    // Before finding the selected option we save its index
+                    .map((option, index) => {
+                        return {
+                            option,
+                            index,
+                        };
+                    })
+                    .find((entry) => {
+                        return entry.option.key === row;
+                    });
 
-                selectedLabels.push(foundOption.label);
+                selectedLabels.push(foundOption);
             });
 
-            return selectedLabels.join(", ");
+            return selectedLabels
+                // Labels are sorted to always be displayed in the props.options order
+                .sort((a, b) => {
+                    if (a.index < b.index) {
+                        return -1;
+                    }
+
+                    if (a.index > b.index) {
+                        return 1;
+                    }
+
+                    return 0;
+                })
+                .map(entry => entry.option.label)
+                .join(", ");
         }
     }
 
