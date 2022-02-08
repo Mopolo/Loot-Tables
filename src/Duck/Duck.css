@@ -1,0 +1,8 @@
+#duck {
+    font-size: 0.75rem;
+    line-height: 1rem;
+    margin-top: -20px;
+    position: relative;
+    top: 5px;
+    cursor: pointer;
+}

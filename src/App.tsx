@@ -14,6 +14,9 @@ import SubCategoryPage from "./SubCategory/SubCategoryPage";
 import ExportModal from "./Data/ExportModal";
 import ImportModal from "./Data/ImportModal";
 import AboutModal from "./AboutModal";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
+import Duck from "./Duck/Duck";
 
 const App: React.FC = () => {
     const [showExportModal, setShowExportModal] = useState(false);
@@ -72,9 +75,19 @@ const App: React.FC = () => {
 
                 <footer className="footer mt-auto py-3 bg-light"
                         style={{position: "fixed", bottom: "0", width: "100%"}}>
-                    <Container className="text-end">
-                        <span className="link-primary" role="button"
-                              onClick={() => setShowAboutModal(true)}>À propos</span>
+                    <Container>
+                        <Row>
+                            <Col>
+                                <Duck/>
+                            </Col>
+
+                            <Col className="">
+                                <div className="text-end">
+                                    <span className="link-primary" role="button"
+                                          onClick={() => setShowAboutModal(true)}>À propos</span>
+                                </div>
+                            </Col>
+                        </Row>
                     </Container>
                 </footer>
             </RecoilRoot>
