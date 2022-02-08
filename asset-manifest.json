@@ -1,13 +1,13 @@
 {
   "files": {
-    "main.css": "/Loot-Tables/static/css/main.1a8a0596.css",
-    "main.js": "/Loot-Tables/static/js/main.ef573bd7.js",
-    "index.html": "/Loot-Tables/index.html",
-    "main.1a8a0596.css.map": "/Loot-Tables/static/css/main.1a8a0596.css.map",
-    "main.ef573bd7.js.map": "/Loot-Tables/static/js/main.ef573bd7.js.map"
+    "main.css": "/static/css/main.1a8a0596.css",
+    "main.js": "/static/js/main.04a887e3.js",
+    "index.html": "/index.html",
+    "main.1a8a0596.css.map": "/static/css/main.1a8a0596.css.map",
+    "main.04a887e3.js.map": "/static/js/main.04a887e3.js.map"
   },
   "entrypoints": [
     "static/css/main.1a8a0596.css",
-    "static/js/main.ef573bd7.js"
+    "static/js/main.04a887e3.js"
   ]
 }
