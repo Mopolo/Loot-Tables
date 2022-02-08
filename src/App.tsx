@@ -1,4 +1,4 @@
-import React, {MouseEvent, useState} from 'react';
+import React, {useState} from 'react';
 import {Route, Routes} from "react-router-dom";
 import {LinkContainer} from 'react-router-bootstrap';
 import Container from "react-bootstrap/Container";
@@ -73,7 +73,8 @@ const App: React.FC = () => {
                 <footer className="footer mt-auto py-3 bg-light"
                         style={{position: "fixed", bottom: "0", width: "100%"}}>
                     <Container className="text-end">
-                        <span className="link-primary" role="button" onClick={() => setShowAboutModal(true)}>À propos</span>
+                        <span className="link-primary" role="button"
+                              onClick={() => setShowAboutModal(true)}>À propos</span>
                     </Container>
                 </footer>
             </RecoilRoot>
