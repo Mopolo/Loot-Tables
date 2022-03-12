@@ -9,10 +9,10 @@ import {categoryStore} from "../Category/CategoryStore";
 import {subCategoryStore} from "../SubCategory/SubCategoryStore";
 import {typeStore} from "../Type/TypeStore";
 import {rarityStore} from "../Rarity/RarityStore";
-import DropdownMultiselect from "../Common/DropdownMultiselect";
 import {Model} from "../Common/Model";
 import {faTimes} from "@fortawesome/free-solid-svg-icons/faTimes";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import CriteriaModal from "./CriteriaModal";
 
 interface Props {
     model: ItemModel;
@@ -55,7 +55,7 @@ const ItemFormRow: React.FC<Props> = (props) => {
     }
 
     function onChangeCriteria<T extends Model>(newCriteriaNamesList: Array<string>, criteriaList: Array<T>, editCriteriaList: EditCriteriaList) {
-        editCriteriaList(criteriaList.filter(c => newCriteriaNamesList.includes(c.name)).map(c => c.id));
+        editCriteriaList(newCriteriaNamesList);
     }
 
     return (
@@ -64,31 +64,29 @@ const ItemFormRow: React.FC<Props> = (props) => {
                 <Form.Control type="text" value={props.model.name} onChange={e => editName(e.target.value)}/>
             </td>
             <td>
-                <DropdownMultiselect
-                    options={categoryList.map(c => c.name)}
-                    name={"categories" + props.model.id}
-                    selected={selectedCriteria(props.model.categories, categoryList)}
-                    handleOnChange={(names: Array<string>) => onChangeCriteria(names, categoryList, editCategoryList)}
-                />
+                <CriteriaModal model={props.model}
+                               name="categories"
+                               criteriaList={categoryList}
+                               selected={props.model.categories}
+                               onChange={ids => onChangeCriteria(ids, categoryList, editCategoryList)}/>
             </td>
             <td>
-                <DropdownMultiselect
-                    options={subCategoryList.map(c => c.name)}
-                    name={"sub-categories" + props.model.id}
-                    selected={selectedCriteria(props.model.subCategories, subCategoryList)}
-                    handleOnChange={(names: Array<string>) => onChangeCriteria(names, subCategoryList, editSubCategoryList)}
-                />
+                <CriteriaModal model={props.model}
+                               name="sub-categories"
+                               criteriaList={subCategoryList}
+                               selected={props.model.subCategories}
+                               onChange={ids => onChangeCriteria(ids, subCategoryList, editSubCategoryList)}/>
             </td>
             <td>
-                <DropdownMultiselect
-                    options={typeList.map(c => c.name)}
-                    name={"types" + props.model.id}
-                    selected={selectedCriteria(props.model.types, typeList)}
-                    handleOnChange={(names: Array<string>) => onChangeCriteria(names, typeList, editTypeList)}
-                />
+                <CriteriaModal model={props.model}
+                               name="types"
+                               criteriaList={typeList}
+                               selected={props.model.types}
+                               onChange={ids => onChangeCriteria(ids, typeList, editTypeList)}/>
             </td>
             <td>
-                <Form.Select value={selectedCriteria(props.model.rarities, rarityList)[0]} onChange={e => onChangeCriteria([e.target.value], rarityList, editRarityList)}>
+                <Form.Select value={selectedCriteria(props.model.rarities, rarityList)[0]}
+                             onChange={e => onChangeCriteria([e.target.value], rarityList, editRarityList)}>
                     {rarityList.map(rarity => <option value={rarity.name} key={rarity.id}>{rarity.name}</option>)}
                 </Form.Select>
             </td>
