@@ -17,6 +17,7 @@ import {faGem} from "@fortawesome/free-solid-svg-icons/faGem";
 import {getRandomInt} from "../Util/Math";
 import {generatorStore} from "./GeneratorStore";
 import RarityBadge from "../Rarity/RarityBadge";
+import Pagination from "react-bootstrap/Pagination";
 
 const GeneratorComponent: React.FC = () => {
     const itemList = useRecoilValue(itemStore);
@@ -30,8 +31,12 @@ const GeneratorComponent: React.FC = () => {
     const [selectedSubCategory, setSelectedSubCategory] = useState(generatorOptions.subCategory || subCategoryList[0]?.id || "");
     const [selectedType, setSelectedType] = useState(generatorOptions.type || typeList[0]?.id || "");
     const [selectedRarity, setSelectedRarity] = useState(generatorOptions.rarity || rarityList[0]?.id || "");
+    const [selectedLootableItemsPage, setSelectedLootableItemsPage] = useState(generatorOptions.lootablePage || 1);
     const [lootableItems, setLootableItems] = useState<Array<ItemModel>>([]);
     const [lootedItems, setLootedItems] = useState<Array<ItemModel>>([]);
+
+    const itemsPerPage = 10;
+    const pages = Math.ceil(lootableItems.length / itemsPerPage);
 
     useEffect(() => {
         setLootableItems(itemList.filter(i => {
@@ -72,8 +77,9 @@ const GeneratorComponent: React.FC = () => {
             subCategory: selectedSubCategory,
             type: selectedType,
             rarity: selectedRarity,
+            lootablePage: selectedLootableItemsPage,
         });
-    }, [itemList, rarityList, selectedCategory, selectedSubCategory, selectedType, selectedRarity, setGeneratorOptions]);
+    }, [itemList, rarityList, selectedCategory, selectedSubCategory, selectedType, selectedRarity, selectedLootableItemsPage, setGeneratorOptions]);
 
     const generateLoot = () => {
         let items = lootableItems.filter(i => {
@@ -88,6 +94,20 @@ const GeneratorComponent: React.FC = () => {
 
         setLootedItems(items);
     };
+
+    const LootableItemsPaginator = () => {
+        let numbers = [];
+
+        for (let number = 1; number <= pages; number++) {
+            numbers.push(
+                <Pagination.Item key={number} active={number === selectedLootableItemsPage} onClick={() => setSelectedLootableItemsPage(number)}>
+                    {number}
+                </Pagination.Item>
+            );
+        }
+
+        return <Pagination>{numbers}</Pagination>;
+    }
 
     return (
         <Form>
@@ -148,7 +168,7 @@ const GeneratorComponent: React.FC = () => {
                         lootableItems.length === 0
                             ? <span>Aucun loot</span>
                             : <ListGroup as="ol">
-                                {lootableItems.map(item => {
+                                {lootableItems.slice((selectedLootableItemsPage - 1) * itemsPerPage, ((selectedLootableItemsPage - 1) * itemsPerPage) + itemsPerPage).map(item => {
                                     return <ListGroup.Item key={item.id}
                                                            as="li"
                                                            className="d-flex justify-content-between align-items-start">
@@ -157,6 +177,9 @@ const GeneratorComponent: React.FC = () => {
                                 })}
                             </ListGroup>
                     }
+                    <div className="mt-3">
+                        <LootableItemsPaginator/>
+                    </div>
                 </Col>
                 <Col xs={6}>
                     <h2 className="display-6">Loot</h2>

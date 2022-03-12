@@ -6,7 +6,7 @@ import {generatorStore, GeneratorStore} from "../Generator/GeneratorStore";
 import {Sorting} from "../Common/Sorting";
 
 type ItemCriteriaKey = keyof SubType<ItemModel, Array<string>>;
-type GeneratorCriteriaKey = keyof GeneratorStore;
+type GeneratorCriteriaKey = keyof SubType<GeneratorStore, string>;
 
 /**
  * This Recoil Selector triggers a cleanup in the ItemStore every time a criteria store is updated.

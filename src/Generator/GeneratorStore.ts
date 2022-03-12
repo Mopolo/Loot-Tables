@@ -6,6 +6,7 @@ export interface GeneratorStore {
     subCategory: string;
     type: string;
     rarity: string;
+    lootablePage: number;
 }
 
 export const generatorStore = atom<GeneratorStore>({
@@ -15,6 +16,7 @@ export const generatorStore = atom<GeneratorStore>({
         subCategory: "",
         type: "",
         rarity: "",
+        lootablePage: 1,
     },
     effects: [
         localStorageEffect('generator'),
