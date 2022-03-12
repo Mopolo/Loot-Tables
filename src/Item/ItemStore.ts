@@ -3,6 +3,7 @@ import {localStorageEffect} from "../Util/Store";
 import ItemModel from "./ItemModel";
 import {Model, SubType} from "../Common/Model";
 import {generatorStore, GeneratorStore} from "../Generator/GeneratorStore";
+import {Sorting} from "../Common/Sorting";
 
 type ItemCriteriaKey = keyof SubType<ItemModel, Array<string>>;
 type GeneratorCriteriaKey = keyof GeneratorStore;
@@ -67,4 +68,26 @@ export const itemsPageStore = atom({
     effects: [
         localStorageEffect('items-page'),
     ]
+});
+
+export const itemsSortingStore = atom<Sorting>({
+    key: "items-sorting",
+    default: {
+        name: 0,
+    },
+    effects: [
+        localStorageEffect('items-sorting'),
+    ]
+});
+
+export const sortedItemsState = selector({
+    key: 'sortedItemsState',
+    get: ({get}) => {
+        const sorting = get(itemsSortingStore);
+        const list = get(itemStore);
+
+        return [...list].sort((a, b) => {
+            return a.name.localeCompare(b.name) * sorting.name;
+        });
+    }
 });

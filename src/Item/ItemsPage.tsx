@@ -1,8 +1,8 @@
 import React, {useEffect} from "react";
 import Table from "react-bootstrap/Table";
-import {useRecoilState, useRecoilValue} from "recoil";
+import {useRecoilState, useRecoilValue, useSetRecoilState} from "recoil";
 import Button from "react-bootstrap/Button";
-import {itemsPageStore, itemStore} from "./ItemStore";
+import {itemsPageStore, itemsSortingStore, itemStore, sortedItemsState} from "./ItemStore";
 import ItemFormRow from "./ItemFormRow";
 import {newModelId} from "../Common/Model";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -11,10 +11,14 @@ import ButtonGroup from "react-bootstrap/ButtonGroup";
 import ButtonToolbar from "react-bootstrap/ButtonToolbar";
 import Pagination from "react-bootstrap/Pagination";
 import {rarityStore} from "../Rarity/RarityStore";
+import SortIcon from "../Common/Sorting/SortIcon";
+import {switchSorting} from "../Common/Sorting";
 
 const ItemsPage: React.FC = () => {
-    const [itemList, setItemList] = useRecoilState(itemStore);
+    const setItemList = useSetRecoilState(itemStore);
+    const itemList = useRecoilValue(sortedItemsState);
     const [page, setPage] = useRecoilState(itemsPageStore);
+    const [sorting, setSorting] = useRecoilState(itemsSortingStore);
     const rarityList = useRecoilValue(rarityStore);
     const itemsPerPage = 15;
     const pages = Math.ceil(itemList.length / itemsPerPage);
@@ -89,6 +93,10 @@ const ItemsPage: React.FC = () => {
         setItemList(old => [...old, ...newItems]);
     };
 
+    const sortName = () => {
+        setSorting(old => ({...old, name: switchSorting(sorting.name)}));
+    };
+
     return (
         <div className="mt-5">
             <Paginator/>
@@ -96,7 +104,9 @@ const ItemsPage: React.FC = () => {
             <Table borderless hover>
                 <thead>
                 <tr>
-                    <th>Nom</th>
+                    <th role="button" onClick={sortName}>
+                        Name <SortIcon value={sorting.name}/>
+                    </th>
                     <th>Catégories</th>
                     <th>Sous-catégories</th>
                     <th>Types</th>
