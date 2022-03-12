@@ -65,7 +65,7 @@ const GeneratorComponent: React.FC = () => {
                 && i.subCategories.includes(selectedSubCategory)
                 && i.types.includes(selectedType)
                 && rarityOk;
-        }));
+        }).sort((a, b) => a.name.localeCompare(b.name)));
 
         setGeneratorOptions({
             category: selectedCategory,
