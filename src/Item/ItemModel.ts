@@ -1,4 +1,4 @@
-import {Model} from "../Common/Model";
+import {Model, SubType} from "../Common/Model";
 
 export default interface ItemModel extends Model {
     categories: string[];
@@ -8,3 +8,5 @@ export default interface ItemModel extends Model {
     rarities: string[];
     includeHigherRarities: boolean;
 }
+
+export type ItemCriteria = keyof SubType<ItemModel, string[]>;

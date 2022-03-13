@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import Table from "react-bootstrap/Table";
 import {useRecoilState, useRecoilValue, useSetRecoilState} from "recoil";
 import Button from "react-bootstrap/Button";
@@ -13,8 +13,15 @@ import Pagination from "react-bootstrap/Pagination";
 import {rarityStore} from "../Rarity/RarityStore";
 import SortIcon from "../Common/Sorting/SortIcon";
 import {switchSorting} from "../Common/Sorting";
+import CriteriaModal from "./CriteriaModal";
+import ItemModel, {ItemCriteria} from "./ItemModel";
+import {replaceItemAtId} from "../Util/Arr";
 
 const ItemsPage: React.FC = () => {
+    const [showCriteriaModal, setShowCriteriaModal] = useState(false);
+    const [criteriaModalItem, setCriteriaModalItem] = useState<ItemModel>();
+    const [criteriaModalKey, setCriteriaModalKey] = useState<ItemCriteria>();
+
     const setItemList = useSetRecoilState(itemStore);
     const itemList = useRecoilValue(sortedItemsState);
     const [page, setPage] = useRecoilState(itemsPageStore);
@@ -97,6 +104,31 @@ const ItemsPage: React.FC = () => {
         setSorting(old => ({...old, name: switchSorting(sorting.name)}));
     };
 
+    function onStartItemCriteriaSelection(item: ItemModel, criteriaKey: ItemCriteria) {
+        setCriteriaModalItem(item);
+        setCriteriaModalKey(criteriaKey);
+        setShowCriteriaModal(true);
+    }
+
+    function onSelectItemCriteria(criteriaIds: Array<string>) {
+        if (criteriaModalItem === undefined || criteriaModalKey === undefined) {
+            return;
+        }
+
+        const newList = replaceItemAtId(itemList, criteriaModalItem.id, {
+            ...criteriaModalItem,
+            [criteriaModalKey]: criteriaIds,
+        });
+
+        setItemList(newList);
+    }
+
+    function onCloseCriteriaSelectionModal() {
+        setShowCriteriaModal(false);
+        setCriteriaModalItem(undefined);
+        setCriteriaModalKey(undefined);
+    }
+
     return (
         <div className="mt-5">
             <Paginator/>
@@ -117,7 +149,10 @@ const ItemsPage: React.FC = () => {
                 </thead>
                 <tbody>
                 {itemList.slice((page - 1) * itemsPerPage, ((page - 1) * itemsPerPage) + itemsPerPage).map(i =>
-                    <ItemFormRow model={i} key={i.id}/>)}
+                    <ItemFormRow model={i}
+                                 key={i.id}
+                                 onStartItemCriteriaSelection={onStartItemCriteriaSelection}
+                    />)}
                 </tbody>
             </Table>
 
@@ -135,6 +170,12 @@ const ItemsPage: React.FC = () => {
                     </ButtonGroup>
                 </ButtonToolbar>
             </div>
+
+            {criteriaModalItem && criteriaModalKey && <CriteriaModal model={criteriaModalItem}
+                                                                     criteriaKey={criteriaModalKey}
+                                                                     show={showCriteriaModal}
+                                                                     onClose={onCloseCriteriaSelectionModal}
+                                                                     onChange={onSelectItemCriteria}/>}
         </div>
     );
 };

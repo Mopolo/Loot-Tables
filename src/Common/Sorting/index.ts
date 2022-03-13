@@ -5,11 +5,11 @@ export interface Sorting {
 }
 
 export const switchSorting = (current: SortingValue): SortingValue => {
-    if (current == -1) {
+    if (current === -1) {
         return 0;
     }
 
-    if (current == 1) {
+    if (current === 1) {
         return -1;
     }
 

@@ -1,100 +1,94 @@
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import Modal from "react-bootstrap/Modal";
-import Button from "react-bootstrap/Button";
-import {Model} from "../Common/Model";
 import Form from "react-bootstrap/Form";
 import ListGroup from "react-bootstrap/ListGroup";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
+import {useRecoilValue} from "recoil";
+import {categoryStore} from "../Category/CategoryStore";
+import {subCategoryStore} from "../SubCategory/SubCategoryStore";
+import {typeStore} from "../Type/TypeStore";
+import {rarityStore} from "../Rarity/RarityStore";
+import ItemModel, {ItemCriteria} from "./ItemModel";
 
 interface Props {
-    model: Model
-    criteriaList: Array<Model>
-    name: string
-    selected: Array<string> // model id list
-    onChange: (ids: Array<string>) => void;
+    model: ItemModel
+    criteriaKey: ItemCriteria
+    show: boolean;
+    onClose: () => void;
+    onChange: (criteriaIds: Array<string>) => void;
 }
 
 const CriteriaModal: React.FC<Props> = (props) => {
-    const [show, setShow] = useState(false);
-    const [criteriaList, setCriteriaList] = useState<Array<{ model: Model, selected: boolean }>>(props.criteriaList.map(model => {
-        return {
-            model,
-            selected: props.selected.includes(model.id)
-        };
-    }));
+    const lists = {
+        categories: useRecoilValue(categoryStore),
+        subCategories: useRecoilValue(subCategoryStore),
+        types: useRecoilValue(typeStore),
+        rarities: useRecoilValue(rarityStore),
+    };
 
-    const handleClose = () => setShow(false);
-    const handleShow = () => setShow(true);
+    const [criteriaList, setCriteriaList] = useState(
+        lists[props.criteriaKey].map(model => {
+            return {
+                model,
+                selected: props.model[props.criteriaKey].includes(model.id),
+            };
+        })
+    );
 
     const handleChange = (id: string, add: boolean) => {
-        setCriteriaList(old => {
-            return old.map(criteria => {
-                if (criteria.model.id == id) {
-                    criteria.selected = add;
-                }
+        const newList = criteriaList.map(criteria => {
+            if (criteria.model.id === id) {
+                criteria.selected = add;
+            }
 
-                return criteria;
-            });
+            return criteria;
         });
+
+        setCriteriaList(newList);
+        props.onChange(newList.filter(c => c.selected).map(c => c.model.id));
     }
 
     const handleCheckAll = () => {
         const selected = criteriaList.filter(c => c.selected);
+        const shouldSelect = selected.length !== lists[props.criteriaKey].length;
 
-        const shouldSelect = selected.length != props.criteriaList.length;
+        const newList = criteriaList.map(criteria => {
+            return {
+                ...criteria,
+                selected: shouldSelect,
+            }
+        });
 
-        setCriteriaList(old => old.map(c => ({
-            ...c,
-            selected: shouldSelect,
-        })));
+        setCriteriaList(newList);
+        props.onChange(newList.filter(c => c.selected).map(c => c.model.id));
     };
 
-    const placeholder = () => {
-        const selected = criteriaList.filter(c => c.selected);
-
-        if (selected.length == 0) {
-            return 'Aucune sélection';
-        }
-
-        return selected.map(c => c.model.name).join(', ');
-    };
-
-    useEffect(() => {
-        props.onChange(criteriaList.filter(c => c.selected).map(c => c.model.id));
-    }, [criteriaList]);
-
-    return <>
-        <Button variant="light" onClick={handleShow} className="text-truncate" style={{width: "180px"}}>
-            {placeholder()}
-        </Button>
-
-        <Modal show={show} onHide={handleClose} animation={false}>
-            <Modal.Header>
-                <Container fluid className="p-0">
-                    <Row>
-                        <Col>{props.model.name}</Col>
-                        <Col className="text-end">
-                            <span role="button" onClick={handleCheckAll}>Tout cocher/décocher</span>
-                        </Col>
-                    </Row>
-                </Container>
-            </Modal.Header>
-            <ListGroup>
-                {criteriaList.map((criteria, index) =>
-                    <ListGroup.Item key={index}>
-                        <Form.Switch
-                            id={`model-${props.model.id}-criteria-${props.name}-${index}`}
-                            checked={criteria.selected}
-                            onChange={e => handleChange(criteria.model.id, e.target.checked)}
-                            label={criteria.model.name}
-                        />
-                    </ListGroup.Item>
-                )}
-            </ListGroup>
-        </Modal>
-    </>
+    return <Modal show={props.show} onHide={props.onClose} animation={false}>
+        <Modal.Header>
+            <Container fluid className="p-0">
+                <Row>
+                    <Col>{props.model.name}</Col>
+                    <Col className="text-end">
+                        <span role="button" onClick={handleCheckAll}>Tout cocher/décocher</span>
+                    </Col>
+                </Row>
+            </Container>
+        </Modal.Header>
+        <ListGroup>
+            {criteriaList.map((criteria, index) =>
+                <ListGroup.Item key={index}>
+                    <Form.Switch
+                        id={`model-${props.model.id}-criteria-${props.criteriaKey}-${index}`}
+                        checked={criteria.selected}
+                        onChange={e => handleChange(criteria.model.id, e.target.checked)}
+                        label={criteria.model.name}
+                    />
+                </ListGroup.Item>
+            )}
+        </ListGroup>
+    </Modal>
 }
 
 export default CriteriaModal;
