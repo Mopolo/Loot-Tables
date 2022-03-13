@@ -23,6 +23,7 @@ const ItemsPage: React.FC = () => {
     const [criteriaModalKey, setCriteriaModalKey] = useState<ItemCriteria>();
 
     const setItemList = useSetRecoilState(itemStore);
+    const rawItemList = useRecoilValue(itemStore);
     const itemList = useRecoilValue(sortedItemsState);
     const [page, setPage] = useRecoilState(itemsPageStore);
     const [sorting, setSorting] = useRecoilState(itemsSortingStore);
@@ -115,7 +116,8 @@ const ItemsPage: React.FC = () => {
             return;
         }
 
-        const newList = replaceItemAtId(itemList, criteriaModalItem.id, {
+        // We use the rawItemList to save the change to keep the initial sorting
+        const newList = replaceItemAtId(rawItemList, criteriaModalItem.id, {
             ...criteriaModalItem,
             [criteriaModalKey]: criteriaIds,
         });
